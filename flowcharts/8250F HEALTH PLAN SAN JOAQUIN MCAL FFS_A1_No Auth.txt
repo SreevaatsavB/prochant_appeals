@@ -1,0 +1,65 @@
+### Workflow for Addressing Claims Denied Due to "No Auth"
+
+#### Step 1: Identify Denial Reason
+- The claim was denied due to "No Auth."
+  
+#### Step 2: Review the Claim 
+- Reviewed the claim in the designated claims management software (e.g., **MedImpact**, **Epic**).
+- Verify the specific line items to confirm the denial reason.
+
+#### Step 3: Check for Auth Documentation
+- Search for authorization documentation in relevant systems (e.g., **AuthZ**, **Provider Portal**):
+  - **If authorization documentation is found**: 
+    - Verify if it covers the denied procedure.
+    - If covered, proceed to resubmit the claim with the authorization attached.
+  - **If authorization documentation is not found**:
+    - Proceed to Step 4.
+
+#### Step 4: Contact the Provider
+- Call the provider’s office to check if authorization was obtained.
+  - **If authorization was obtained**: 
+    - Request that they fax or email the authorization letter to you for documentation.
+    - Once received, attach the authorization to the claim and resubmit.
+  - **If authorization was not obtained**:
+    - Proceed to Step 5.
+
+#### Step 5: Verify Authorization Requirements
+- Review the insurance policy regarding authorization requirements (check the **Payer Policy Manual**).
+- Confirm if the procedure normally requires prior authorization.
+  - **If prior authorization is required**:
+    - Proceed to Step 6.
+  - **If prior authorization is not required**:
+    - Prepare to raise an appeal with the necessary documents explaining why the claim should be paid.
+
+#### Step 6: Obtain Authorization
+- Generate a request for authorization based on the relevant guidelines (use **the Authorization Request Form**).
+- Submit the authorization request to the payer (via online portal or fax).
+- **Wait for response:**
+  - **If authorization is granted**: 
+    - Document the authorization details and attach it to the claim.
+    - Resubmit the claim.
+  - **If authorization is denied**:
+    - Document the denial and proceed to raise an appeal. 
+
+#### Step 7: Prepare Appeal (if applicable)
+- Collect all necessary documentation, including:
+  - The original claim
+  - Any communication with the provider
+  - The payer policy manual stating no auth required (if applicable).
+- Draft the appeal letter and submit to the payer's appeals department.
+  
+#### Step 8: Follow-Up
+- Monitor the status of the resubmitted claim or appeal through the claims management software.
+- Document all communications and decisions throughout the process for future reference.
+
+### Summary
+1. Identify denial reason.
+2. Review claim in claims management software.
+3. Check for authorization documentation.
+4. Contact provider for missing auth.
+5. Verify authorization requirements in policy.
+6. Obtain authorization if required.
+7. Prepare an appeal if necessary.
+8. Follow up on the claim status. 
+
+This workflow should help new agents systematically address claims denied due to "No Auth," ensuring all pertinent actions are taken to resolve the denial effectively.

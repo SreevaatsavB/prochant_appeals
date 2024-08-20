@@ -1,0 +1,43 @@
+### Decision Tree for Handling Claims Denied Due to "Paid" Status
+
+1. **Claim Denied Due to "Paid" Status**
+   - Review the claim details in Payspan.
+   - Check for payment status and any details regarding the payment made.
+
+2. **Identify Payment Amount and Date**
+   - Confirm the payment date and amount from Payspan.
+   - If available, reference the specific check or claim number.
+
+3. **Validate Allowed Amount**
+   - **If reimbursement is related to HCPCS Code (e.g., TC, A4606, T4525):**
+     - Look up the fee schedule for the specific HCPCS code.
+     - Determine the allowed payment amount based on the fee schedule.
+     - **If Fee Schedule is Not Available:**
+       - Calculate the allowed amount using the Cost + 10% method (Refer to Cardinal or invoice details).
+
+4. **Compare Paid Amount to Allowed Amount**
+   - If the paid amount **exceeds** the allowed amount:
+     - Adjust the balance due on the claim.
+     - Document the reason for adjustment and proceed to reprocess the claim if necessary.
+
+   - If the paid amount is **within** the allowed amount:
+     - Confirm the claim was paid correctly.
+     - **Check if Claim was Posted:**
+       - If **Not Posted**: Post the claim in the system (use software such as Caretend).
+       - If **Posted**: Document the action taken for future reference.
+
+5. **If Confirmation Needs Request:**
+   - If any verification is needed regarding payments or discrepancies:
+     - Contact the billing department or customer service to confirm payment status or details.
+
+6. **End Process**
+   - Ensure all actions are logged in the appropriate system (Payspan, Caretend, or Medical Portal).
+   - If all actions have been completed, close the case.
+
+### Recap of Software to Utilize
+- **Payspan**: For checking payment statuses and details.
+- **Caretend**: For posting claims and adjusting balances.
+- **Medical Portal**: For verifying eligibility and hospital information.
+
+### Note for New Agents
+This workflow aims to guide you through the process of managing claims marked as "Paid" effectively. Always document your findings and actions taken to ensure transparency and compliance. If you encounter complexities beyond this flow, don't hesitate to reach out to your supervisor for additional guidance.

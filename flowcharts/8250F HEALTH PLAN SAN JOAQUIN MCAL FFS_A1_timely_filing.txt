@@ -1,0 +1,39 @@
+The claim was denied due to timely filing.
+
+1. **Review Denial:**
+   - Reviewed the claim in the billing software (e.g., Zirmed, Emdeon); the reason for denial was timely filing.
+
+2. **Check Filing Dates:**
+   - Verified the original date of service (DOS) against the claim submission date.
+   - Confirm if the claim was submitted within the allowable time frame per the payer's guidelines.
+
+3. **Action Based on Filing Dates:**
+   - If the claim was submitted within the timely filing limit:
+     - Gather supporting documentation (e.g., proof of timely submission, emails, or confirmation receipts).
+     - **Next Steps:** Proceed to appeal:
+       - Draft an appeal letter outlining the reason for the late filing and attach supporting documents.
+       - Submit the appeal via the payer's preferred method (e.g., online portal, fax).
+   - If the claim was submitted outside the timely filing limit:
+     - Evaluate if there are any valid reasons for the late filing (e.g., patient delay, system error).
+     - If valid reasons are identified:
+       - Gather supporting documentation for valid reasons (e.g., patient’s request, technical errors).
+       - Proceed to appeal following the steps above.
+     - If no valid reasons are identified:
+       - Document the findings in the claims system.
+       - Inform the provider or patient that the claim cannot be pursued further due to timely filing issues.
+
+4. **Monitor Appeal Status:**
+   - Follow up on the appeal status through the payer's portal or by contacting their customer service.
+   - Document any updates in the claims software.
+
+5. **Final Resolution:**
+   - If the appeal is accepted:
+     - Update the claim status in the billing software accordingly.
+     - Confirm with the provider/patient regarding the resolution.
+   - If the appeal is denied:
+     - Analyze the denial reason.
+     - Determine if additional action (e.g., second appeal) is viable.
+     - If not, communicate to the provider/patient about the final decision and potential options moving forward.
+
+6. **Documentation:**
+   - Ensure all communication, actions taken, and resolutions are documented in the claims software for future reference.
