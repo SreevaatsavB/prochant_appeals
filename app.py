@@ -149,12 +149,9 @@ def club_denial_reasons(payor_name, medical_code, selected_keys, new_group_name)
 
     filename = f'call_notes/call_notes_{payor_name}_{medical_code}.json'
 
-    st.write(filename)
-
     if os.path.exists(filename):
         json_data_code = read_json_file(filename)
 
-    st.write(json_data_code)
     new_json = []
 
     for dic in json_data_code:
