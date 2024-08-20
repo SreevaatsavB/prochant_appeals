@@ -54,7 +54,9 @@ def process_data(df_1):
 
     t = df_1['OriginalInvoiceNumber'].value_counts().reset_index()
     t.columns = ["index", "count"]
-
+    # print()
+    # print(t.columns)
+    # print()
 
     t2 = t[t['count']==1].reset_index(drop='index')
     t2.columns = ['OriginalInvoiceNumber','count']
@@ -155,6 +157,7 @@ def club_denial_reasons(payor_name, medical_code, selected_keys, new_group_name)
     for dic in json_data_code:
 
         try:
+            print("yoooooo")
             denial_reason = dic["claim_notes"][0]["denial_reason"]
 
             if denial_reason in selected_keys:
@@ -170,14 +173,15 @@ def club_denial_reasons(payor_name, medical_code, selected_keys, new_group_name)
     st.write(f"Clubbed the reasons and saved data to {filename}")
 
 
-    combined_flowchart = "\n".join(st.session_state["mappings"][payor_name][medical_code][key] for key in selected_keys)
+    combined_flowchart = "\n".join(st.session_state["mappings"][medical_code][key] for key in selected_keys)
 
-    st.session_state["mappings"][payor_name][medical_code][new_group_name] = combined_flowchart
+    st.session_state["mappings"][medical_code][new_group_name] = combined_flowchart
     
     for key in selected_keys:
-        del st.session_state["mappings"][payor_name][medical_code][key]
+        del st.session_state["mappings"][medical_code][key]
     
-    return st.session_state["mappings"][payor_name][medical_code]
+    return st.session_state["mappings"][medical_code]
+
 
 
 def club_codes(codes, new_group_name, payor_name, df_payor, processed_df):
@@ -218,45 +222,53 @@ def club_codes(codes, new_group_name, payor_name, df_payor, processed_df):
     dump_to_json(new_code_data, new_filename)
 
 
-    if new_group_name not in st.session_state["mappings"][payor_name]:
-        st.session_state["mappings"][payor_name][new_group_name] = {}
+    if new_group_name not in st.session_state["mappings"]:
+        st.session_state["mappings"][new_group_name] = {}
 
     else:
         raise("The given group name already exists")
     
 
     for c in codes:
-        if c not in st.session_state["mappings"][payor_name]:
-            st.session_state["mappings"][payor_name][c] = {}
+        if c not in st.session_state["mappings"]:
+            st.session_state["mappings"][c] = {}
 
     new_mapping = {}
     for c in codes:
-        new_mapping.update(st.session_state["mappings"][payor_name][c])
+        new_mapping.update(st.session_state["mappings"][c])
 
-    st.session_state["mappings"][payor_name][new_group_name] = new_mapping
+    st.session_state["mappings"][new_group_name] = new_mapping
 
     for c in codes:
-        del st.session_state["mappings"][payor_name][c]
+        del st.session_state["mappings"][c]
 
-    return st.session_state["mappings"][payor_name]
+    return st.session_state["mappings"]
 
 
-def delete_reasons(medical_code, del_reasons, payor_name):
+
+
+def update_medical_codes(medical_code, denial_reason_to_delete):
+    if medical_code in st.session_state["mappings"] and denial_reason_to_delete in st.session_state["mappings"][medical_code]:
+        del st.session_state["mappings"][medical_code][denial_reason_to_delete]
+    return list(st.session_state["mappings"][medical_code].keys())
+
+
+def delete_reasons(medical_code, del_reasons):
 
     for dr in del_reasons:
-        if medical_code in st.session_state["mappings"][payor_name] and dr in st.session_state["mappings"][payor_name][medical_code]:
-            del st.session_state["mappings"][payor_name][medical_code][dr]
+        if medical_code in st.session_state["mappings"] and dr in st.session_state["mappings"][medical_code]:
+            del st.session_state["mappings"][medical_code][dr]
 
-    return list(st.session_state["mappings"][payor_name][medical_code].keys())
+    return list(st.session_state["mappings"][medical_code].keys())
 
 
-def delete_codes(del_codes, payor_name):
+def delete_codes(del_codes):
 
     for code in del_codes:
-        if code in st.session_state["mappings"][payor_name]:
-            del st.session_state["mappings"][payor_name][code]
+        if code in st.session_state["mappings"]:
+            del st.session_state["mappings"][code]
 
-    return list(st.session_state["mappings"][payor_name].keys())
+    return list(st.session_state["mappings"].keys())
 
 
 
@@ -268,8 +280,8 @@ st.markdown('## Denial Management Flowchart Generator')
 payor_name = st.selectbox('Select a Payor Name', df['PayorName'].unique())
 # st.session_state["payor_name"] = payor_name
 
-if payor_name not in st.session_state["mappings"]:
-    st.session_state["mappings"][payor_name] = {}
+if f"payor_dict_{payor_name}" not in st.session_state:
+    st.session_state[f"payor_dict_{payor_name}"] = {}
 
 
 if payor_name:
@@ -306,8 +318,10 @@ if payor_name:
 
     # list(processed_df['DenialCode'].unique())
     for c in list(processed_df['DenialCode'].unique()):
-        if c not in st.session_state["mappings"][payor_name]:
-            st.session_state["mappings"][payor_name][c] = {}
+        if c not in st.session_state["mappings"]:
+
+            st.session_state["mappings"][c] = {}
+            st.session_state[f"payor_dict_{payor_name}"][c] = {}
 
         else:
             continue
@@ -322,7 +336,7 @@ if payor_name:
         st.session_state["selected_dcs"].append(k)
 
      
-    if st.session_state["selected_dcs"] != []:
+    if st.session_state["selected_dcs"] is not None:
 
         new_group_name = st.text_input('Enter a name for the new group of codes')
 
@@ -338,12 +352,12 @@ if payor_name:
     st.markdown("### Deleting denial codes")
 
 
-    del_codes = st.multiselect('Select denial codes to be deleted', list(st.session_state["mappings"][payor_name].keys()), key = "1554")
+    del_codes = st.multiselect('Select denial codes to be deleted', list(st.session_state["mappings"].keys()), key = "1554")
 
     # denial_reason_to_delete = st.selectbox('Select a denial reason to delete', list(st.session_state["mappings"][denial_code].keys()))
     
     if st.button('Delete Selected Denial Codes', key = "4504"):
-        updated_keys = delete_codes(del_codes, payor_name)
+        updated_keys = delete_codes(del_codes)
         st.write(f"Deleted denial codes :- {del_codes}")
 
 
@@ -352,15 +366,68 @@ if payor_name:
     #############################################################################
     
     st.markdown("##")
-    st.markdown("### Get flowchart for a denial reasons of the selected denial code")
+    st.markdown("### Get flowchart for the denial reasons")
     # Denial code selection
-    curr_denial_code = st.selectbox('Select a Denial Code', list(st.session_state["mappings"][payor_name].keys()))
+    curr_denial_code = st.selectbox('Select a Denial Code', list(st.session_state["mappings"].keys()))
 
-    print("curr_denial_code = ", curr_denial_code)
 
-    if curr_denial_code is not None:
+    if curr_denial_code not in st.session_state[f"payor_dict_{payor_name}"]:
+        st.session_state[f"payor_dict_{payor_name}"][curr_denial_code] = {}
+        
 
-        if st.session_state["denial_code"] is None:
+    if st.session_state["denial_code"] is None:
+
+        
+        df_denial_code = get_denial_code_entries(curr_denial_code, processed_df, df_payor)
+        df_payor_denial_cn = df_denial_code[['CallNotes']].drop_duplicates().dropna().reset_index(drop=True)
+
+        filename = f'call_notes/call_notes_{payor_name}_{curr_denial_code}.json'
+
+        if os.path.exists(filename):
+            json_data = read_json_file(filename)
+            st.write(f"Loaded data from {filename}")
+
+        else:
+            num_rows = min(df_payor_denial_cn.shape[0], 300)
+            json_actions_parallel = process_call_notes_parallel(num_rows, max_threads=100)
+
+            dump_to_json(json_actions_parallel, filename)
+            st.write(f"Processed and saved data to {filename}")
+            json_data = read_json_file(filename)
+
+
+        reasons = []
+        for i in range(len(json_data)):
+            try:
+                reasons.append(json_data[i]['claim_notes'][0]['denial_reason'])
+            except:
+                continue
+
+        keys_json = get_denial_mappings(reasons)
+
+        if "keys_json" not in st.session_state:
+            st.session_state["keys_json"] = keys_json
+            st.session_state[f"payor_dict_{payor_name}"][curr_denial_code]["keys_json"] = keys_json
+
+
+        new_json_mapping = get_clubbed_denials(keys_json)
+
+        if "new_json_mapping" not in st.session_state:
+            st.session_state["new_json_mapping"] = new_json_mapping
+            st.session_state[f"payor_dict_{payor_name}"][curr_denial_code]["new_json_mapping"] = new_json_mapping
+
+
+        st.session_state["denial_code"] = curr_denial_code
+
+        # keys_json = st.session_state["keys_json"]
+        # new_json_mapping = st.session_state["new_json_mapping"]
+    
+
+    else:
+
+        print(curr_denial_code, st.session_state["denial_code"])
+
+        if curr_denial_code != st.session_state["denial_code"]:
 
             df_denial_code = get_denial_code_entries(curr_denial_code, processed_df, df_payor)
             df_payor_denial_cn = df_denial_code[['CallNotes']].drop_duplicates().dropna().reset_index(drop=True)
@@ -392,192 +459,139 @@ if payor_name:
             if "keys_json" not in st.session_state:
                 st.session_state["keys_json"] = keys_json
 
-
             new_json_mapping = get_clubbed_denials(keys_json)
 
-            if "new_json_mapping" not in st.session_state:
-                st.session_state["new_json_mapping"] = new_json_mapping
+            # if "new_json_mapping" not in st.session_state:
+            st.session_state["new_json_mapping"] = new_json_mapping
+            st.session_state[f"payor_dict_{payor_name}"][curr_denial_code]["new_json_mapping"] = new_json_mapping
+            
 
+            st.session_state["keys_json"] = keys_json
+            st.session_state[f"payor_dict_{payor_name}"][curr_denial_code]["keys_json"] = keys_json
 
             st.session_state["denial_code"] = curr_denial_code
 
-            # keys_json = st.session_state["keys_json"]
-            # new_json_mapping = st.session_state["new_json_mapping"]
-        
 
-        else:
+        # keys_json = st.session_state["keys_json"]
+        # new_json_mapping = st.session_state["new_json_mapping"]
 
-            print(curr_denial_code, st.session_state["denial_code"])
-
-            if curr_denial_code != st.session_state["denial_code"]:
-
-                df_denial_code = get_denial_code_entries(curr_denial_code, processed_df, df_payor)
-                df_payor_denial_cn = df_denial_code[['CallNotes']].drop_duplicates().dropna().reset_index(drop=True)
-
-                filename = f'call_notes/call_notes_{payor_name}_{curr_denial_code}.json'
-
-                if os.path.exists(filename):
-                    json_data = read_json_file(filename)
-                    st.write(f"Loaded data from {filename}")
-
-                else:
-                    num_rows = min(df_payor_denial_cn.shape[0], 300)
-                    json_actions_parallel = process_call_notes_parallel(num_rows, max_threads=100)
-
-                    dump_to_json(json_actions_parallel, filename)
-                    st.write(f"Processed and saved data to {filename}")
-                    json_data = read_json_file(filename)
+        keys_json = st.session_state[f"payor_dict_{payor_name}"][curr_denial_code]["keys_json"]
+        new_json_mapping = st.session_state[f"payor_dict_{payor_name}"][curr_denial_code]["new_json_mapping"]
 
 
-                reasons = []
-                for i in range(len(json_data)):
-                    try:
-                        reasons.append(json_data[i]['claim_notes'][0]['denial_reason'])
-                    except:
-                        continue
 
-                keys_json = get_denial_mappings(reasons)
+    keys_to_consider = new_json_mapping.keys()
 
-                if "keys_json" not in st.session_state:
-                    st.session_state["keys_json"] = keys_json
+    denial_code = curr_denial_code
 
-                new_json_mapping = get_clubbed_denials(keys_json)
+    if denial_code not in st.session_state["mappings"]:
+        st.session_state["mappings"][denial_code] = {}
 
-                # if "new_json_mapping" not in st.session_state:
-                st.session_state["new_json_mapping"] = new_json_mapping
-                
-                st.session_state["keys_json"] = keys_json
+    for k in keys_to_consider:
+        st.session_state["mappings"][denial_code][k] = ""
+ 
+    st.session_state["mappings"][denial_code] = new_json_mapping
 
-                st.session_state["denial_code"] = curr_denial_code
+    st.markdown("##")
+    st.markdown("### Clubbing denial reasons")
+
+    selected_keys = st.multiselect('Select denial reasons to club together', list(st.session_state["mappings"][denial_code].keys()), key = "1")
 
 
-            keys_json = st.session_state["keys_json"]
-            new_json_mapping = st.session_state["new_json_mapping"]
+    print("selected keys = ", selected_keys)
+    print()
 
+    for k in selected_keys:
+        st.session_state["selected_keys"].append(k)
 
-        keys_to_consider = new_json_mapping.keys()
+     
+    if st.session_state["selected_keys"] is not None:
 
-        if curr_denial_code is not None:
-            denial_code = curr_denial_code
+        new_group_name = st.text_input('Enter a name for the new group')
 
-        else:
-            denial_code = st.session_state["denial_code"]
-            
+        print(st.session_state["mappings"][denial_code])
 
-        if denial_code not in st.session_state["mappings"][payor_name]:
-            st.session_state["mappings"][payor_name][denial_code] = {}
+        if st.button('Club Selected Denial Reasons', key = "3433"):
+            if new_group_name:
+                updated_mapping = club_denial_reasons(payor_name , denial_code, selected_keys, new_group_name)
+                st.write(f"Updated denial reasons for {denial_code}: {updated_mapping}")
+            else:
+                st.warning("Please enter a name for the new group.")
 
-        for k in keys_to_consider:
-            st.session_state["mappings"][payor_name][denial_code][k] = ""
     
-        st.session_state["mappings"][payor_name][denial_code] = new_json_mapping
-
-        st.markdown("##")
-        st.markdown("### Clubbing denial reasons")
-
-        selected_keys = st.multiselect('Select denial reasons to club together', list(st.session_state["mappings"][payor_name][denial_code].keys()), key = "1")
-
-        print("selected keys = ", selected_keys)
-        print()
-
-        for k in selected_keys:
-            st.session_state["selected_keys"].append(k)
-
-        
-        if st.session_state["selected_keys"] != []:
-
-            new_group_name = st.text_input('Enter a name for the new group')
-
-            print("CLUBBING")
-            print(st.session_state["mappings"][payor_name][denial_code])
-
-            if st.button('Club Selected Denial Reasons', key = "3433"):
-                if new_group_name:
-                    updated_mapping = club_denial_reasons(payor_name , denial_code, selected_keys, new_group_name)
-                    st.write(f"Updated denial reasons for {denial_code}: {updated_mapping}")
-                else:
-                    st.warning("Please enter a name for the new group.")
-
-        
-        st.session_state["club_reasons"] = True
+    st.session_state["club_reasons"] = True
 
 
 
-        st.markdown("##")
-        st.markdown("### Select the denial reasons you want to delete")
+    st.markdown("##")
+    st.markdown("### Select the denial reasons you want to delete")
 
-        del_reasons = st.multiselect('Select denial reasons to delete', list(st.session_state["mappings"][payor_name][denial_code].keys()), key = "1374")
+    del_reasons = st.multiselect('Select denial reasons to delete', list(st.session_state["mappings"][denial_code].keys()), key = "1374")
 
-        # denial_reason_to_delete = st.selectbox('Select a denial reason to delete', list(st.session_state["mappings"][denial_code].keys()))
-        
-        if st.button('Delete Selected Denial Reason', key = "454"):
-            updated_keys = delete_reasons(denial_code, del_reasons, payor_name)
-            st.write(f"Updated denial reasons for {denial_code}: {updated_keys}")
+    # denial_reason_to_delete = st.selectbox('Select a denial reason to delete', list(st.session_state["mappings"][denial_code].keys()))
+    
+    if st.button('Delete Selected Denial Reason', key = "454"):
+        updated_keys = delete_reasons(denial_code, del_reasons)
+        st.write(f"Updated denial reasons for {denial_code}: {updated_keys}")
 
-        st.markdown("##")
+    st.markdown("##")
 
-        st.markdown("### Flowchart ")
-        denial_reason = st.selectbox('Select a Denial Reason', list(new_json_mapping.keys()), index=None)
+    st.markdown("### Flowchart ")
+    denial_reason = st.selectbox('Select a Denial Reason', list(new_json_mapping.keys()), index=None)
 
-        if denial_reason:
+    if denial_reason:
 
-            flowchart_filename = f'flowcharts/{payor_name}_{denial_code}_{denial_reason}.txt'
+        flowchart_filename = f'flowcharts/{payor_name}_{denial_code}_{denial_reason}.txt'
 
-            if os.path.exists(flowchart_filename):
-                # If the file exists, read the flowchart from the file
-                st.write(f"Loaded data from {flowchart_filename}")
-                with open(flowchart_filename, 'r') as file:
-                    flowchart = file.read()
+        if os.path.exists(flowchart_filename):
+            # If the file exists, read the flowchart from the file
+            st.write(f"Loaded data from {flowchart_filename}")
+            with open(flowchart_filename, 'r') as file:
+                flowchart = file.read()
+
+        else:
+
+            filename = f'call_notes/call_notes_{payor_name}_{denial_code}.json'
+
+            if os.path.exists(filename):
+                json_data = read_json_file(filename)
+
+            # If the file doesn't exist, generate the flowchart and save it
+            # notes = [note for note in json_data if note['claim_notes'][0]['denial_reason'] == denial_reason]
+
+            notes = []
+            for i in range(len(json_data)):
+                note = json_data[i]
+                try:
+                    if note['claim_notes'][0]['denial_reason'] == denial_reason:
+                        notes.append(note)
+                except:
+                    continue
+
+            if len(notes) == 0:
+                flowchart = "Not enough data for genrating a flowchart"
 
             else:
-
-                filename = f'call_notes/call_notes_{payor_name}_{denial_code}.json'
-
-                if os.path.exists(filename):
-                    json_data = read_json_file(filename)
-
-                # If the file doesn't exist, generate the flowchart and save it
-                # notes = [note for note in json_data if note['claim_notes'][0]['denial_reason'] == denial_reason]
-
-
-                notes = []
-                for i in range(len(json_data)):
-                    note = json_data[i]
-                    try:
-                        if note['claim_notes'][0]['denial_reason'] == denial_reason:
-                            notes.append(note)
-                    except:
-                        continue
-
-
-                print(" ")
-                print(notes)
-                print(" ")
-
-                if len(notes) == 0:
-                    flowchart = "Not enough data for genrating a flowchart"
-
-                else:
-                    flowchart = get_flowchart(denial_reason, notes)
-                    
-                    # Save the flowchart to the text file
-                    with open(flowchart_filename, 'w') as file:
-                        file.write(flowchart)
-
-                    st.write(f"Flowchart written to {flowchart_filename}")
+                flowchart = get_flowchart(denial_reason, notes)
                 
-            st.markdown(flowchart)  
+                # Save the flowchart to the text file
+                with open(flowchart_filename, 'w') as file:
+                    file.write(flowchart)
 
-            st.markdown('#')
-            st.markdown("### Edit the flowchart if needed")
-            new_markdown = st.text_area("Edit the flowchart", value=flowchart, height=300)
+                st.write(f"Flowchart written to {flowchart_filename}")
+            
+        st.markdown(flowchart)  
 
-            with open(flowchart_filename, 'w') as file:
-                    file.write(new_markdown)
+        st.markdown('#')
+        st.markdown("### Edit the flowchart if needed")
+        new_markdown = st.text_area("Edit the flowchart", value=flowchart, height=300)
 
-            st.write(f"Flowchart edited on {flowchart_filename}")
+        with open(flowchart_filename, 'w') as file:
+                file.write(new_markdown)
 
-            st.session_state["mappings"][payor_name][denial_code][denial_reason] = new_markdown
+        st.write(f"Flowchart edited on {flowchart_filename}")
+
+        st.session_state["mappings"][denial_code][denial_reason] = new_markdown
 
 
 
