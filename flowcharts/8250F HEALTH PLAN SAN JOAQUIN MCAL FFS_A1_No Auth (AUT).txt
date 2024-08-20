@@ -1,0 +1,50 @@
+### Workflow for Addressing Denials Due to No Authorization (AUT)
+
+1. **Claim Denial Notification**
+   - Claim was denied due to "No Auth (AUT)".
+  
+2. **Review Claim Details**
+   - Access the claim in **Waystar** to verify the denial reason.
+   - Confirm denial reason is "CO-197 for no authorization".
+
+3. **Check Authorization Status**
+   - Refer to the **Authorization Portal**.
+   - Search for associated authorization numbers related to the claim.
+   - If valid authorization exists:
+     - Confirm details (Authorization# D22090200007, valid from 9/2/2022 to 12/7/2022).
+   - If no valid authorization is found:
+     - Document this finding for further review.
+
+4. **Evaluate Authorization Timing**
+   - Compare the Date of Service (DOS) (11/14/2022) with the authorization validity period.
+   - If DOS falls within the valid authorization time frame:
+     - Note the discrepancy and prepare to address it.
+   - If DOS is outside the validity period:
+     - Understand that the claim will need a new authorization.
+
+5. **Submit Corrected Claim**
+   - If valid authorization confirmed within timeframe:
+     - Prepare a corrected claim submission in **Waystar**.
+     - Ensure corrected claim follows TFL guidelines (180 days from DOS).
+   - Provide a detailed explanation about the existing authorization within the claim notes.
+
+6. **Follow Up on Submission**
+   - Track the status of the corrected claim submission in **Waystar**.
+   - If still denied:
+     - Assess the reasons for continued denial with the relevant department.
+
+7. **Raise an Appeal (if necessary)**
+   - If the corrected claim does not resolve the issue:
+     - Prepare an appeal with necessary documentation (authorization details, claim notes).
+     - Submit the appeal to the appropriate department or insurance provider.
+
+8. **Communication with Patient or Provider (if required)**
+   - If no valid authorization is found and the DOS is outside the authorized period:
+     - Contact the patient or provider to request the necessary authorization.
+     - Document any correspondence for future reference.
+
+9. **Final Resolution Documentation**
+   - Once resolved—whether through resubmission or appeal—ensure to document the final resolution in **Waystar** and claim notes for future reference.
+
+### Summary:
+This workflow guides agents through the process of handling denials due to "No Auth (AUT)", ensuring they verify, check, document, and resolve issues effectively using the specified systems.

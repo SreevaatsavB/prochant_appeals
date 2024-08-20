@@ -1,0 +1,46 @@
+### Decision Tree for Handling Claim Denials: Paid []
+
+#### Step 1: Identify Denial Reason
+- The claim was denied due to "Paid []".
+- Reviewed the claim in the billing system (e.g., Payspan).
+
+#### Step 2: Verify Payment Information
+- Check the payment report for any existing payments related to the claim.
+  - If payment is listed, note the date, amount, and any reference number.
+  - If no payment is found, proceed to Step 3.
+  
+#### Step 3: Contact the Payer
+- Call the insurance company customer service to verify payment status.
+  - If payment has been made, ask for payment details (date, amount).
+  - If payment is not made, document the reason provided.
+
+#### Step 4: Assess Need for Additional Information
+- Check if there are additional documents or codes that need to be submitted.
+  - If so, gather necessary documentation (e.g., EOB, medical records).
+  - If not, proceed to Step 5.
+
+#### Step 5: Update Claim or Appeal
+- If payment information is clarified:
+  - Update the claim in the billing system with new payment details.
+  - Resubmit the claim to the payer.
+- If payment status remains unclear or is disputed:
+  - Prepare an appeal with supporting documentation (EOB, notes from customer service).
+  
+#### Step 6: Follow-Up
+- Set reminders to follow up on the resubmitted claim or appeal after a designated period (e.g., 30 days).
+- Track the progress in the accounts receivable software.
+
+#### Step 7: Document the Process
+- Ensure to log all actions taken in the appropriate software system.
+- Note any conversations with customer service, including names and reference numbers.
+
+#### Step 8: Monitor Results
+- Regularly review the claims status and address any further denials as needed.
+- Share findings with team to enhance understanding of similar denials in the future.
+
+### Software Tools to Reference
+- **Claims Management System**: Payspan or other billing management software for reviewing claims and payments.
+- **Documentation Tools**: Use internal documentation software for logging calls and claims history.
+- **Communication Tools**: Ensure to have access to phone systems or customer service portals for inquiries. 
+
+This structured approach ensures clarity in handling "Paid []" claim denials effectively while allowing new agents to navigate through common scenarios in claims resolution.
