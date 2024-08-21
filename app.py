@@ -199,9 +199,9 @@ def club_codes(codes, new_group_name, payor_name, df_payor, processed_df):
 
         else:
             df_denial_code = get_denial_code_entries(dcode, processed_df, df_payor)
-            df_payor_denial_cn = df_denial_code[['CallNotes']].drop_duplicates().dropna().reset_index(drop=True)
+            df_payor_denial = df_denial_code[['CallNotes']].drop_duplicates().dropna().reset_index(drop=True)
 
-            num_rows = min(df_payor_denial_cn.shape[0], 300)
+            num_rows = min(df_payor_denial.shape[0], 300)
             json_actions_parallel = process_call_notes_parallel(num_rows, max_threads=100)
 
             dump_to_json(json_actions_parallel, filename)
@@ -263,7 +263,20 @@ def delete_reasons(medical_code, del_reasons, payor_name):
 
     return list(st.session_state["mappings"][payor_name][medical_code].keys())
 
+def get_callnote_codes(d_codes, processed_df, df_payor):
 
+    codes_op = []
+
+    for denial_code in d_codes:
+        df_denial_code = get_denial_code_entries(denial_code, processed_df, df_payor)
+        print(denial_code)
+        print(df_denial_code.shape)
+        print(  )
+        if df_denial_code.shape[0] > 30:
+            codes_op.append(denial_code)
+
+    print(codes_op)
+    return codes_op 
 
 
 
@@ -303,7 +316,9 @@ if payor_name:
 
 
         if payor_name != st.session_state["payor_name"]:
-            denial_code_options = list(processed_df['DenialCode'].unique())
+            
+            all_codes = list(processed_df['DenialCode'].unique())
+            denial_code_options = get_callnote_codes(all_codes, processed_df, df_payor)
             # st.text(denial_code_options)
 
         else:
@@ -323,7 +338,9 @@ if payor_name:
             st.session_state["processed_df"] = processed_df
             st.session_state["club_reasons"] = False
 
-            denial_code_options = list(st.session_state["mappings"][payor_name].keys())
+            # denial_code_options = list(st.session_state["mappings"][payor_name].keys())
+            all_codes = list(processed_df['DenialCode'].unique())
+            denial_code_options = get_callnote_codes(all_codes, processed_df, df_payor)
 
         else:
             denial_code_options = list(st.session_state["mappings"][payor_name].keys())
@@ -340,7 +357,7 @@ if payor_name:
 
 
     # list(processed_df['DenialCode'].unique())
-    for c in list(processed_df['DenialCode'].unique()):
+    for c in denial_code_options:
         if c not in st.session_state["mappings"][payor_name]:
             st.session_state["mappings"][payor_name][c] = {}
 
@@ -427,6 +444,7 @@ if payor_name:
                     st.session_state["clubbed_mapping"] = clubbed_mapping
 
                 st.session_state["mappings"][payor_name][curr_denial_code] = clubbed_mapping
+                st.write("uPDATED CLUBBINGS")
 
                 st.session_state["denial_code"] = curr_denial_code
 
@@ -443,8 +461,6 @@ if payor_name:
 
                 df_denial_code = get_denial_code_entries(curr_denial_code, processed_df, df_payor)
                 df_payor_denial_cn = df_denial_code[['CallNotes']].drop_duplicates().dropna().reset_index(drop=True)
-
-                # st.write("No.of callnotes retieved = ", df_payor_denial_cn.shape)
 
 
                 filename = f'call_notes/call_notes_{payor_name}_{curr_denial_code}.json'
@@ -495,6 +511,8 @@ if payor_name:
 
                         st.session_state["denial_code"] = curr_denial_code
 
+
+            # df_payor_denial_cn
             denial_mappings = st.session_state["denial_mappings"]
             clubbed_mapping = st.session_state["clubbed_mapping"]
 
@@ -633,6 +651,10 @@ if payor_name:
         # else:
         #     idx = None
         # denial_reason = st.selectbox('Select a Denial Reason', list(st.session_state["clubbed_mapping"].keys()), index = None)
+        if st.button("Ask again"):
+            for k in st.session_state:
+                del st.session_state[k]
+            st.rerun()
 
         denial_reason = st.selectbox('Select a Denial Reason', list(st.session_state["mappings"][payor_name][denial_code].keys()), index = None)
         st.session_state["denial_reason"] = denial_reason
