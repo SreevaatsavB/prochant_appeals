@@ -470,27 +470,31 @@ if payor_name:
                     except:
                         continue
 
-                
-                if st.session_state["mappings"][payor_name][curr_denial_code] != {}:
-                    clubbed_mapping = st.session_state["mappings"][payor_name][curr_denial_code]
-
+                        
+                if curr_denial_code == "":
+                    pass
 
                 else:
-                    denial_mappings = get_denial_mappings(reasons)
-
-                    if "denial_mappings" not in st.session_state:
-                        st.session_state["denial_mappings"] = denial_mappings
+                    if st.session_state["mappings"][payor_name][curr_denial_code] != {}:
+                        clubbed_mapping = st.session_state["mappings"][payor_name][curr_denial_code]
 
 
-                    clubbed_mapping = get_clubbed_denials(denial_mappings)
+                    else:
+                        denial_mappings = get_denial_mappings(reasons)
+
+                        if "denial_mappings" not in st.session_state:
+                            st.session_state["denial_mappings"] = denial_mappings
 
 
-                    if "clubbed_mapping" not in st.session_state:
-                        st.session_state["clubbed_mapping"] = clubbed_mapping
+                        clubbed_mapping = get_clubbed_denials(denial_mappings)
 
-                    st.session_state["mappings"][payor_name][curr_denial_code] = clubbed_mapping
 
-                    st.session_state["denial_code"] = curr_denial_code
+                        if "clubbed_mapping" not in st.session_state:
+                            st.session_state["clubbed_mapping"] = clubbed_mapping
+
+                        st.session_state["mappings"][payor_name][curr_denial_code] = clubbed_mapping
+
+                        st.session_state["denial_code"] = curr_denial_code
 
             denial_mappings = st.session_state["denial_mappings"]
             clubbed_mapping = st.session_state["clubbed_mapping"]
