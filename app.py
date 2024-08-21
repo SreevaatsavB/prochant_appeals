@@ -427,7 +427,6 @@ if payor_name:
                     st.session_state["clubbed_mapping"] = clubbed_mapping
 
                 st.session_state["mappings"][payor_name][curr_denial_code] = clubbed_mapping
-                st.write("uPDATED CLUBBINGS")
 
                 st.session_state["denial_code"] = curr_denial_code
 
