@@ -280,6 +280,18 @@ def get_callnote_codes(d_codes, processed_df, df_payor):
 
 
 
+with st.sidebar:
+
+    with st.container():
+        st.write("Click here to get the flowchart from the start")
+
+        if st.button("Ask again"):
+            for k in st.session_state:
+                del st.session_state[k]
+            st.rerun()
+
+
+
 st.markdown('## Denial Management Flowchart Generator')
 
 if st.session_state["payor_name"] is not None:
@@ -352,8 +364,9 @@ if payor_name:
 
     ########################################################################################
     # Merging the codes
-    st.markdown("##")
+    
     st.markdown("### Select or Club remark codes")
+    st.markdown("#### ** Ensure to give a group name")
 
 
     # list(processed_df['DenialCode'].unique())
@@ -376,7 +389,7 @@ if payor_name:
 
     if st.session_state["selected_dcs"] != []:
 
-        new_group_name = st.text_input('Enter a name for the new group of codes',value=None)
+        new_group_name = st.text_input('Enter a name for the new group of codes **',value=None)
 
         if st.button('Club Selected Remark Codes', key = "1221"):
             if new_group_name:
@@ -386,7 +399,8 @@ if payor_name:
                 st.warning("Please enter a name for the new group of codes")
 
         else:
-            st.warning("Please enter a name for the new group of codes")
+            pass
+            # st.warning("Please enter a name for the new group of codes")
 
                 
     
@@ -588,7 +602,7 @@ if payor_name:
         # st.session_state["clubbed_mapping"] = new_reason_dict
 
         # reasons_to_display
-        st.markdown("##")
+        
         st.markdown("### Clubbing denial reasons")
 
         selected_keys = st.multiselect('Select denial reasons to club together', list(st.session_state["mappings"][payor_name][denial_code].keys()), key = "1")
@@ -624,8 +638,6 @@ if payor_name:
 
         st.session_state["club_reasons"] = True
 
-
-        st.markdown("##")
         st.markdown("### Select the denial reasons you want to delete")
 
 
@@ -638,7 +650,7 @@ if payor_name:
             updated_keys = delete_reasons(denial_code, del_reasons, payor_name)
             st.write(f"Deleted denial reasons :- {del_reasons}")
 
-        st.markdown("##")
+        
 
         # st.text(st.session_state["clubbed_mapping"].keys())
 
@@ -651,73 +663,59 @@ if payor_name:
         # else:
         #     idx = None
         # denial_reason = st.selectbox('Select a Denial Reason', list(st.session_state["clubbed_mapping"].keys()), index = None)
-        if st.button("Ask again"):
-            for k in st.session_state:
-                del st.session_state[k]
-            st.rerun()
+        
+
+
+#         with st.spinner('Wait for it...'):
+#     time.sleep(5)
+# st.success("Done!")
 
         denial_reason = st.selectbox('Select a Denial Reason', list(st.session_state["mappings"][payor_name][denial_code].keys()), index = None)
-        st.session_state["denial_reason"] = denial_reason
 
+        st.session_state["denial_reason"] = denial_reason
 
         print("denial_reason = ", denial_reason)
 
         if denial_reason:
 
-            print("yespspps")
+            with st.spinner('Flowchart being generated .....'):
 
-            flowchart_filename = f'flowcharts/{payor_name}_{denial_code}_{denial_reason}.txt'
+                flowchart_filename = f'flowcharts/{payor_name}_{denial_code}_{denial_reason}.txt'
 
-            # st.session_state["mappings"][payor_name][denial_code][new_group_name]
+                filename = f'call_notes/call_notes_{payor_name}_{denial_code}.json'
 
-            # if os.path.exists(flowchart_filename):
-            #     # If the file exists, read the flowchart from the file
-            #     st.write(f"Loaded data from {flowchart_filename}")
-            #     with open(flowchart_filename, 'r') as file:
-            #         flowchart = file.read()
-
-            # else:
-
-            filename = f'call_notes/call_notes_{payor_name}_{denial_code}.json'
-
-            if os.path.exists(filename):
-                json_data = read_json_file(filename)
+                if os.path.exists(filename):
+                    json_data = read_json_file(filename)
 
 
-            print(" ")
-            print(json_data)
-            print(" ")
+                reasons_selected = st.session_state["mappings"][payor_name][denial_code][denial_reason]
 
-            # If the file doesn't exist, generate the flowchart and save it
-            # notes = [note for note in json_data if note['claim_notes'][0]['denial_reason'] == denial_reason]
-
-            reasons_selected = st.session_state["mappings"][payor_name][denial_code][denial_reason]
-
-            notes = []
-            for i in range(len(json_data)):
-                note = json_data[i]
-                try:
-                    if note['claim_notes'][0]['denial_reason'] in reasons_selected:
-                        notes.append(note)
-                except:
-                    continue
+                notes = []
+                for i in range(len(json_data)):
+                    note = json_data[i]
+                    try:
+                        if note['claim_notes'][0]['denial_reason'] in reasons_selected:
+                            notes.append(note)
+                    except:
+                        continue
 
 
-            print(" ")
-            print(notes)
-            print(" ")
+                print(" ")
+                print(notes)
+                print(" ")
 
-            if len(notes) == 0:
-                flowchart = "Not enough data for genrating a flowchart"
+                if len(notes) == 0:
+                    flowchart = "Not enough data for genrating a flowchart"
 
-            else:
-                flowchart = get_flowchart(denial_reason, notes)
-                
-                # Save the flowchart to the text file
-                with open(flowchart_filename, 'w') as file:
-                    file.write(flowchart)
+                else:
+                    flowchart = get_flowchart(denial_reason, notes)
+                    
+                    # Save the flowchart to the text file
+                    with open(flowchart_filename, 'w') as file:
+                        file.write(flowchart)
 
-                st.write(f"Flowchart written to {flowchart_filename}")
+                    
+                st.success("Flowchat generated!")
                 
             
             st.markdown(flowchart)  
@@ -731,6 +729,7 @@ if payor_name:
 
             st.write(f"Flowchart edited on {flowchart_filename}")
 
+        
             # st.session_state["mappings"][payor_name][denial_code][denial_reason] = new_markdown
 
 
