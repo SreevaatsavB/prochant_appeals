@@ -234,7 +234,7 @@ def club_codes(codes, new_group_name, payor_name, df_payor, processed_df):
     new_filename = f'call_notes/call_notes_{payor_name}_{new_group_name}.json'
     dump_to_json(new_code_data, new_filename)
 
-    st.write("Total entries = ", str(len(new_code_data)))
+    # st.write("Total entries = ", str(len(new_code_data)))
     print("Total entries = ", str(len(new_code_data)))
 
     
@@ -436,7 +436,7 @@ if payor_name:
 
             if os.path.exists(filename):
                 json_data = read_json_file(filename)
-                st.write(f"Loaded data from {filename}")
+                # st.write(f"Loaded data from {filename}")
 
             else:
                 num_rows = min(df_payor_denial_cn.shape[0], 300)
@@ -494,7 +494,7 @@ if payor_name:
 
                 if os.path.exists(filename):
                     json_data = read_json_file(filename)
-                    st.write(f"Loaded data from {filename}")
+                    # st.write(f"Loaded data from {filename}")
 
                 else:
                     num_rows = min(df_payor_denial_cn.shape[0], 300)
