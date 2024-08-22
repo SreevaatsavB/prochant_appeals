@@ -5,14 +5,14 @@ import concurrent.futures
 import numpy as np
 import os 
 from openai import OpenAI
-from filetransfer import dump_to_json, read_json_file, delete_directory_contents
+from filetransfer import dump_to_json, read_json_file
 from utils import get_denial_mappings, get_clubbed_denials, get_flowchart
 
 os.environ["OPENAI_API_KEY"] = st.secrets["OPENAI_API_KEY"]
 
 client = OpenAI()
 
-# global df_payor_denial_cn
+global df_payor_denial_cn
 
 if "payor_name" not in st.session_state:
     st.session_state["payor_name"] = None
@@ -89,9 +89,7 @@ def get_denial_code_entries(denial_code, t3, df):
     return df3
 
 
-
-def return_call_note_responses(i, df):
-
+def return_call_note_responses(i):
     response = client.chat.completions.create(
         model="gpt-4o-mini",
         messages= [
@@ -133,7 +131,7 @@ def return_call_note_responses(i, df):
             },
             {
                 "role": "user",
-                "content": df.loc[i]['CallNotes'] +'''Fetch the various actions that the agent has taken and the reason why the actions are taken along with the issue for the above claim note as a JSON so that I can group similar call notes together - example of an action is that the agent calculated fee schedule, searched in a portal, raised appeal etc.
+                "content": df_payor_denial_cn.loc[i]['CallNotes']+'''Fetch the various actions that the agent has taken and the reason why the actions are taken along with the issue for the above claim note as a JSON so that I can group similar call notes together - example of an action is that the agent calculated fee schedule, searched in a portal, raised appeal etc.
                 Make sure to ensure all the keys mentioned abover are present.'''
             }],
         response_format={ "type": "json_object"}
@@ -141,10 +139,9 @@ def return_call_note_responses(i, df):
     return json.loads(response.choices[0].message.content)
 
 
-def process_call_notes_parallel(df, num_rows, max_threads=10):
+def process_call_notes_parallel(num_rows, max_threads=10):
     with concurrent.futures.ThreadPoolExecutor(max_workers=max_threads) as executor:
-        # Pass the dataframe to each thread
-        futures = [executor.submit(return_call_note_responses, i, df) for i in range(num_rows)]
+        futures = [executor.submit(return_call_note_responses, i) for i in range(num_rows)]
 
         json_actions = []
         for future in concurrent.futures.as_completed(futures):
@@ -213,7 +210,7 @@ def club_codes(codes, new_group_name, payor_name, df_payor, processed_df):
             
 
             num_rows = min(df_payor_denial.shape[0], 300)
-            json_actions_parallel = process_call_notes_parallel(df_payor_denial, num_rows, max_threads=100)
+            json_actions_parallel = process_call_notes_parallel(num_rows, max_threads=100)
 
             dump_to_json(json_actions_parallel, filename)
             # st.write(f"Processed and saved data to {filename}")
@@ -233,10 +230,7 @@ def club_codes(codes, new_group_name, payor_name, df_payor, processed_df):
             for i in range(min(len(json_data_code), max_entries)):
                 new_code_data.append(json_data_code[i])
         
-
-    # st.write("new_code_data len = ", len(new_code_data))
-    print("new_code_data len = ", new_code_data)
-
+    
     new_filename = f'call_notes/call_notes_{payor_name}_{new_group_name}.json'
     dump_to_json(new_code_data, new_filename)
 
@@ -302,10 +296,6 @@ with st.sidebar:
         if st.button("Ask again"):
             for k in st.session_state:
                 del st.session_state[k]
-
-
-            delete_directory_contents("call_notes")
-
             st.rerun()
 
 
@@ -438,17 +428,17 @@ if payor_name:
 
             # st.text("No.of entries = " + str(df_payor_denial_cn.shape[0]))
             
-            print("No.of callnotes retieved = ", df_payor_denial_cn.shape)
+            # st.write("No.of callnotes retieved = ", df_payor_denial_cn.shape)
 
             filename = f'call_notes/call_notes_{payor_name}_{curr_denial_code}.json'
 
             if os.path.exists(filename):
                 json_data = read_json_file(filename)
-                st.write(f"Loaded data from {filename}")
+                # st.write(f"Loaded data from {filename}")
 
             else:
                 num_rows = min(df_payor_denial_cn.shape[0], 300)
-                json_actions_parallel = process_call_notes_parallel(df_payor_denial_cn, num_rows, max_threads=100)
+                json_actions_parallel = process_call_notes_parallel(num_rows, max_threads=100)
 
                 dump_to_json(json_actions_parallel, filename)
                 # st.write(f"Processed and saved data to {filename}")
@@ -496,21 +486,17 @@ if payor_name:
                 df_denial_code = get_denial_code_entries(curr_denial_code, processed_df, df_payor)
                 df_payor_denial_cn = df_denial_code[['CallNotes']].drop_duplicates().dropna().reset_index(drop=True)
 
-
-                print("No.of callnotes retieved = ", df_payor_denial_cn.shape)
-
-
-                st.text(df_payor_denial_cn.shape)
+                # st.text(df_payor_denial_cn.shape)
 
                 filename = f'call_notes/call_notes_{payor_name}_{curr_denial_code}.json'
 
                 if os.path.exists(filename):
                     json_data = read_json_file(filename)
-                    st.write(f"Loaded data from {filename}")
+                    # st.write(f"Loaded data from {filename}")
 
                 else:
                     num_rows = min(df_payor_denial_cn.shape[0], 300)
-                    json_actions_parallel = process_call_notes_parallel(df_payor_denial_cn, num_rows, max_threads=100)
+                    json_actions_parallel = process_call_notes_parallel(num_rows, max_threads=100)
 
                     dump_to_json(json_actions_parallel, filename)
                     # st.write(f"Processed and saved data to {filename}")
