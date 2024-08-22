@@ -8,7 +8,7 @@ from openai import OpenAI
 from filetransfer import dump_to_json, read_json_file
 from utils import get_denial_mappings, get_clubbed_denials, get_flowchart
 
-os.environ["OPENAI_API_KEY"] = 'sk-dev-bK7ydev3MKvbddcqZHVeT3BlbkFJI25li23ZpwmY7lq52pdW'
+os.environ["OPENAI_API_KEY"] = st.secrets["OPENAI_API_KEY"]
 
 client = OpenAI()
 
@@ -74,16 +74,9 @@ def get_denial_code_entries(denial_code, t3, df):
     t4 = t3[t3['DenialCode']==denial_code].reset_index(drop='index')
     t4.columns = ['OriginalInvoiceNumber','final_DenialCode','count']
 
-    # st.write("processed_df")
-    # st.write("t4")
-    # st.write(t4)
-
+    frequency = df['OriginalInvoiceNumber'].value_counts().reset_index()
+    frequency.columns = ['OriginalInvoiceNumber','freq']
     df3 = pd.merge(df, t4, on='OriginalInvoiceNumber')
-
-    # st.write("df_payor")
-    # st.write("df3")
-    # st.write(df3)
-
     df3 = df3[df3['Status']=='Closed    '].reset_index(drop='index')
 
     return df3
@@ -206,7 +199,7 @@ def club_codes(codes, new_group_name, payor_name, df_payor, processed_df):
 
         else:
             df_denial_code = get_denial_code_entries(dcode, processed_df, df_payor)
-            df_payor_denial = df_denial_code[['CallNotes']].drop_duplicates().dropna().reset_index(drop=True)
+            df_payor_denial = df_denial_code['CallNotes'].drop_duplicates().dropna().reset_index(drop=True)
 
             num_rows = min(df_payor_denial.shape[0], 300)
             json_actions_parallel = process_call_notes_parallel(num_rows, max_threads=100)
@@ -422,10 +415,7 @@ if payor_name:
         if st.session_state["denial_code"] is None:
 
             df_denial_code = get_denial_code_entries(curr_denial_code, processed_df, df_payor)
-            df_payor_denial_cn = df_denial_code[['CallNotes']].drop_duplicates().dropna().reset_index(drop=True)
-
-
-            st.text(df_payor_denial_cn.shape)
+            df_payor_denial_cn = df_denial_code['CallNotes'].drop_duplicates().dropna().reset_index(drop=True)
             
             # st.write("No.of callnotes retieved = ", df_payor_denial_cn.shape)
 
@@ -483,9 +473,8 @@ if payor_name:
             if curr_denial_code != st.session_state["denial_code"]:
 
                 df_denial_code = get_denial_code_entries(curr_denial_code, processed_df, df_payor)
-                df_payor_denial_cn = df_denial_code[['CallNotes']].drop_duplicates().dropna().reset_index(drop=True)
+                df_payor_denial_cn = df_denial_code['CallNotes'].drop_duplicates().dropna().reset_index(drop=True)
 
-                st.text(df_payor_denial_cn.shape)
 
                 filename = f'call_notes/call_notes_{payor_name}_{curr_denial_code}.json'
 
@@ -738,6 +727,12 @@ if payor_name:
                     file.write(new_markdown)
 
             st.write(f"Flowchart edited on {flowchart_filename}")
+
+        
+            # st.session_state["mappings"][payor_name][denial_code][denial_reason] = new_markdown
+
+
+
 
 # 8153 LA CARE (MEDI-CAL)
 # CO16, 16
