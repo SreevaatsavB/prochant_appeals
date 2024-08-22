@@ -207,6 +207,7 @@ def club_codes(codes, new_group_name, payor_name, df_payor, processed_df):
         else:
             df_denial_code = get_denial_code_entries(dcode, processed_df, df_payor)
             df_payor_denial = df_denial_code[['CallNotes']].drop_duplicates().dropna().reset_index(drop=True)
+            
 
             num_rows = min(df_payor_denial.shape[0], 300)
             json_actions_parallel = process_call_notes_parallel(num_rows, max_threads=100)
@@ -233,6 +234,7 @@ def club_codes(codes, new_group_name, payor_name, df_payor, processed_df):
     new_filename = f'call_notes/call_notes_{payor_name}_{new_group_name}.json'
     dump_to_json(new_code_data, new_filename)
 
+    st.write("Total entries = ", str(len(new_code_data)))
 
     
     for c in codes:
@@ -425,7 +427,7 @@ if payor_name:
             df_payor_denial_cn = df_denial_code[['CallNotes']].drop_duplicates().dropna().reset_index(drop=True)
 
 
-            st.text("No.of entries = " + str(df_payor_denial_cn.shape[0]))
+            # st.text("No.of entries = " + str(df_payor_denial_cn.shape[0]))
             
             # st.write("No.of callnotes retieved = ", df_payor_denial_cn.shape)
 
