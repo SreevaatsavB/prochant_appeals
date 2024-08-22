@@ -383,7 +383,7 @@ if payor_name:
     ########################################################################################
     # Merging the codes
     
-    st.markdown("### Select or Club remark codes")
+    st.markdown("### Select or Club denial codes")
     st.markdown("#### ** Ensure to give a group name")
 
 
@@ -395,7 +395,7 @@ if payor_name:
         else:
             continue
         
-    selected_dcs = st.multiselect('Select remark codes to club together', denial_code_options, key = "66")
+    selected_dcs = st.multiselect('Select denial codes to club together', denial_code_options, key = "66")
 
     print("selected codes = ", selected_dcs)
     print()
@@ -409,10 +409,10 @@ if payor_name:
 
         new_group_name = st.text_input('Enter a name for the new group of codes **',value=None)
 
-        if st.button('Club Selected Remark Codes', key = "1221"):
+        if st.button('Club Selected denial codes', key = "1221"):
             if new_group_name:
                 updated_mapping = club_codes(selected_dcs, new_group_name, payor_name, df_payor, processed_df)
-                st.write(f"Updated remark codes for {selected_dcs}: {new_group_name}")
+                st.write(f"Updated denial codes for {selected_dcs}: {new_group_name}")
             else:
                 st.warning("Please enter a name for the new group of codes")
 
