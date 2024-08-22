@@ -488,7 +488,7 @@ if payor_name:
                 df_denial_code = get_denial_code_entries(curr_denial_code, processed_df, df_payor)
                 df_payor_denial_cn = df_denial_code[['CallNotes']].drop_duplicates().dropna().reset_index(drop=True)
 
-                st.text(df_payor_denial_cn.shape)
+                # st.text(df_payor_denial_cn.shape)
 
                 filename = f'call_notes/call_notes_{payor_name}_{curr_denial_code}.json'
 
