@@ -212,7 +212,7 @@ def club_codes(codes, new_group_name, payor_name, df_payor, processed_df):
             json_actions_parallel = process_call_notes_parallel(num_rows, max_threads=100)
 
             dump_to_json(json_actions_parallel, filename)
-            st.write(f"Processed and saved data to {filename}")
+            # st.write(f"Processed and saved data to {filename}")
 
     num_codes = len(codes)
 
@@ -440,7 +440,7 @@ if payor_name:
                 json_actions_parallel = process_call_notes_parallel(num_rows, max_threads=100)
 
                 dump_to_json(json_actions_parallel, filename)
-                st.write(f"Processed and saved data to {filename}")
+                # st.write(f"Processed and saved data to {filename}")
                 json_data = read_json_file(filename)
 
 
@@ -498,7 +498,7 @@ if payor_name:
                     json_actions_parallel = process_call_notes_parallel(num_rows, max_threads=100)
 
                     dump_to_json(json_actions_parallel, filename)
-                    st.write(f"Processed and saved data to {filename}")
+                    # st.write(f"Processed and saved data to {filename}")
                     json_data = read_json_file(filename)
 
 
