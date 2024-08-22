@@ -425,7 +425,7 @@ if payor_name:
             df_payor_denial_cn = df_denial_code[['CallNotes']].drop_duplicates().dropna().reset_index(drop=True)
 
 
-            st.text(df_payor_denial_cn.shape)
+            st.text("No.of entries = " + str(df_payor_denial_cn.shape[0]))
             
             # st.write("No.of callnotes retieved = ", df_payor_denial_cn.shape)
 
