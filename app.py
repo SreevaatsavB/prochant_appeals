@@ -434,7 +434,7 @@ if payor_name:
 
             if os.path.exists(filename):
                 json_data = read_json_file(filename)
-                st.write(f"Loaded data from {filename}")
+                # st.write(f"Loaded data from {filename}")
 
             else:
                 num_rows = min(df_payor_denial_cn.shape[0], 300)
@@ -486,13 +486,13 @@ if payor_name:
                 df_denial_code = get_denial_code_entries(curr_denial_code, processed_df, df_payor)
                 df_payor_denial_cn = df_denial_code[['CallNotes']].drop_duplicates().dropna().reset_index(drop=True)
 
-                st.text(df_payor_denial_cn.shape)
+                # st.text(df_payor_denial_cn.shape)
 
                 filename = f'call_notes/call_notes_{payor_name}_{curr_denial_code}.json'
 
                 if os.path.exists(filename):
                     json_data = read_json_file(filename)
-                    st.write(f"Loaded data from {filename}")
+                    # st.write(f"Loaded data from {filename}")
 
                 else:
                     num_rows = min(df_payor_denial_cn.shape[0], 300)
