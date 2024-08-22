@@ -8,7 +8,7 @@ from openai import OpenAI
 from filetransfer import dump_to_json, read_json_file
 from utils import get_denial_mappings, get_clubbed_denials, get_flowchart
 
-os.environ["OPENAI_API_KEY"] = 'sk-dev-bK7ydev3MKvbddcqZHVeT3BlbkFJI25li23ZpwmY7lq52pdW'
+os.environ["OPENAI_API_KEY"] = st.secrets["OPENAI_API_KEY"]
 
 client = OpenAI()
 
