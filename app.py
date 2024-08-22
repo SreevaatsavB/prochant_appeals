@@ -739,6 +739,12 @@ if payor_name:
 
             st.write(f"Flowchart edited on {flowchart_filename}")
 
+        
+            # st.session_state["mappings"][payor_name][denial_code][denial_reason] = new_markdown
+
+# /Users/sreevaatsav/Downloads/temp1 copy/prochant_appeals/filetransfer.py
+
+
 # 8153 LA CARE (MEDI-CAL)
 # CO16, 16
 # 
