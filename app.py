@@ -235,6 +235,7 @@ def club_codes(codes, new_group_name, payor_name, df_payor, processed_df):
     dump_to_json(new_code_data, new_filename)
 
     st.write("Total entries = ", str(len(new_code_data)))
+    print("Total entries = ", str(len(new_code_data)))
 
     
     for c in codes:
