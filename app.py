@@ -199,7 +199,7 @@ def club_codes(codes, new_group_name, payor_name, df_payor, processed_df):
 
         else:
             df_denial_code = get_denial_code_entries(dcode, processed_df, df_payor)
-            df_payor_denial = df_denial_code[['CallNotes']].drop_duplicates().dropna().reset_index(drop=True)
+            df_payor_denial = df_denial_code['CallNotes'].drop_duplicates().dropna().reset_index(drop=True)
 
             num_rows = min(df_payor_denial.shape[0], 300)
             json_actions_parallel = process_call_notes_parallel(num_rows, max_threads=100)
@@ -415,7 +415,7 @@ if payor_name:
         if st.session_state["denial_code"] is None:
 
             df_denial_code = get_denial_code_entries(curr_denial_code, processed_df, df_payor)
-            df_payor_denial_cn = df_denial_code[['CallNotes']].drop_duplicates().dropna().reset_index(drop=True)
+            df_payor_denial_cn = df_denial_code['CallNotes'].drop_duplicates().dropna().reset_index(drop=True)
             
             # st.write("No.of callnotes retieved = ", df_payor_denial_cn.shape)
 
@@ -458,7 +458,6 @@ if payor_name:
                     st.session_state["clubbed_mapping"] = clubbed_mapping
 
                 st.session_state["mappings"][payor_name][curr_denial_code] = clubbed_mapping
-                st.write("uPDATED CLUBBINGS")
 
                 st.session_state["denial_code"] = curr_denial_code
 
@@ -474,7 +473,7 @@ if payor_name:
             if curr_denial_code != st.session_state["denial_code"]:
 
                 df_denial_code = get_denial_code_entries(curr_denial_code, processed_df, df_payor)
-                df_payor_denial_cn = df_denial_code[['CallNotes']].drop_duplicates().dropna().reset_index(drop=True)
+                df_payor_denial_cn = df_denial_code['CallNotes'].drop_duplicates().dropna().reset_index(drop=True)
 
 
                 filename = f'call_notes/call_notes_{payor_name}_{curr_denial_code}.json'
