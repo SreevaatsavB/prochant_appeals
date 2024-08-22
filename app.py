@@ -500,7 +500,7 @@ if payor_name:
                 print("No.of callnotes retieved = ", df_payor_denial_cn.shape)
 
 
-                st.text(df_payor_denial_cn.shape)
+                # st.text(df_payor_denial_cn.shape)
 
                 filename = f'call_notes/call_notes_{payor_name}_{curr_denial_code}.json'
 
