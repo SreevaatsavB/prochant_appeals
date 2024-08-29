@@ -136,7 +136,8 @@ def return_call_note_responses(i, df):
                 "content": df.loc[i]['CallNotes'] +'''Fetch the various actions that the agent has taken and the reason why the actions are taken along with the issue for the above claim note as a JSON so that I can group similar call notes together - example of an action is that the agent calculated fee schedule, searched in a portal, raised appeal etc.
                 Make sure to ensure all the keys mentioned abover are present.'''
             }],
-        response_format={ "type": "json_object"}
+        response_format={ "type": "json_object"},
+        temperature = 0
     )
     return json.loads(response.choices[0].message.content)
 

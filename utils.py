@@ -19,6 +19,7 @@ def get_denial_mappings(reasons):
             "role": "user",
             "content": prompt
         }],
+    temperature = 0.0000001,
     response_format={ "type": "json_object"}
     )
 
@@ -50,6 +51,7 @@ def get_clubbed_denials(keys_json):
                 "role": "user",
                 "content": prompt
             }],
+        temperature = 0.0000001,
         response_format={ "type": "json_object"}
         )
     
@@ -84,7 +86,8 @@ def get_flowchart(k, notes):
     response = client.chat.completions.create(
             model="gpt-4o-mini",
             messages= [{"role": "user",
-                        "content":prompt}]
+                        "content":prompt}],
+            temperature = 0
             # response_format={ "type": "json_object"}
             )
 
