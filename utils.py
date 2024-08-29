@@ -19,7 +19,7 @@ def get_denial_mappings(reasons):
             "role": "user",
             "content": prompt
         }],
-    temperature = 0.0000001,
+    # temperature = 0.0000001,
     response_format={ "type": "json_object"}
     )
 
