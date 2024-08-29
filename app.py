@@ -735,6 +735,10 @@ if payor_name:
 
                 else:
                     flowchart = get_flowchart(denial_reason, notes)
+
+                    if "/" in denial_reason:
+                        denial_reason = denial_reason.replace("/", "_")
+                        flowchart_filename = f'flowcharts/{payor_name}___{denial_code}___{denial_reason}.txt'
                     
                     # Save the flowchart to the text file
                     with open(flowchart_filename, 'w') as file:
